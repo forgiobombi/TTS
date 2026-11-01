@@ -9,3 +9,5 @@ The canonical source is **en.json** (English). Edit **it.json** and **pt-BR.json
 - These initial catalogs cover the main screens, not every message in the app yet. Contributors can extend them with more IDs.
 
 Crowdin's gratis open-source program requires a publicly available source repository and approval. This repository is currently private; do not assume a free Crowdin license was granted. Tolgee Cloud's no-cost tier is an alternative subject to its current usage limits. No external project has been created on the user's behalf.
+
+See [the localization setup guide](../../../../docs/LOCALIZATION.md) for step-by-step Tolgee import and export.

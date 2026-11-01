@@ -164,3 +164,10 @@ docs/         architecture, accessibility, virtual mic, release validation
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+
+## Localization
+
+VoxRelay starts with an English interface and an English voice. Choose another UI language in **Settings > App language**, and choose a voice locale separately on **Speak**. English, Italian and Brazilian Portuguese JSON catalogs currently cover the primary screens; untranslated secondary UI falls back to English.
+
+Strings are editable in [the localization folder](src/renderer/src/localization), and can be imported into the free tier of Tolgee, or other JSON localization tools. See [the complete localization guide](docs/LOCALIZATION.md). Run `npm run check:locales` to verify all translations have matching keys and placeholders. No paid service is needed to edit JSON on GitHub.

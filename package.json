@@ -4,7 +4,7 @@
   "productName": "VoxRelay",
   "description": "Open-source TTS launcher for assistive communication and Discord/games (online-first) with virtual microphone",
   "main": "./out/main/index.js",
-  "author": "VoiceLaunch Team",
+  "author": "VoxRelay contributors",
   "license": "MIT",
   "private": false,
   "repository": {
@@ -18,6 +18,7 @@
     "dist": "npm run build && electron-builder",
     "dist:win": "npm run build && electron-builder --win",
     "test": "vitest run",
+    "check:locales": "node scripts/check-locales.cjs",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "test:e2e": "npm run build && playwright test --grep-invert \"@online\"",

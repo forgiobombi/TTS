@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate translations
+        run: npm run check:locales
+
       - name: Type check
         run: npx tsc --noEmit
 
