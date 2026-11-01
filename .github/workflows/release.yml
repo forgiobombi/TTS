@@ -1,87 +1,147 @@
-name: Release
+name: Windows Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    tags: ['v*']
+    paths:
+      - '.github/workflows/release.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'electron-builder.yml'
+      - 'src/**'
+      - 'scripts/**'
+      - 'assets/**'
+      - 'build/**'
+      - '.github/RELEASE_NOTES.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release:
-    name: Build installer and publish release
+    name: Build and verify VoxRelay x64 installer
     runs-on: windows-latest
-    timeout-minutes: 45
-    permissions:
-      contents: write
-
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release version
+        id: version
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $tag = "v$version"
+          if ('${{ github.ref_type }}' -eq 'tag' -and '${{ github.ref_name }}' -ne $tag) {
+            throw "Git tag must match package.json: expected $tag, got ${{ github.ref_name }}"
+          }
+          $releases = gh release list --repo "${{ github.repository }}" --json tagName --limit 100 | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw 'Unable to list releases' }
+          $exists = @($releases | Where-Object { $_.tagName -eq $tag }).Count -gt 0
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "publish=$(!($exists)).ToString().ToLower()" >> $env:GITHUB_OUTPUT
+          Write-Host "Building $tag; new release = $(!($exists))"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
-
-      # Python backend compiled in the job itself (self-contained) — no dependency
-      # on an external artifact. Uses the same locally validated script (isolated venv).
-      - name: Setup Python 3.12
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Build backend Python (PyInstaller)
-        run: scripts\build-python-venv.bat
-        shell: cmd
+      - name: Install JavaScript dependencies
+        run: npm ci
 
-      - name: Type check
-        run: npx tsc --noEmit
+      - name: Validate translations and TypeScript
+        shell: pwsh
+        run: |
+          npm run check:locales
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run type-check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm test
+
+      - name: Build packaged Python backend
+        shell: cmd
+        run: scripts\build-python-venv.bat
 
       - name: Smoke-test packaged backend
         shell: pwsh
         run: ./scripts/smoke-packaged-backend.ps1
 
-      - name: Build Electron
+      - name: Compile Electron
         run: npm run build
 
-      - name: Fetch VB-Cable (bundled virtual microphone)
+      - name: Run Windows Electron E2E (offline)
+        run: npx playwright test --grep-invert '@online'
+
+      - name: Fetch verified VB-Cable package
         shell: pwsh
         run: ./scripts/fetch-vbcable.ps1
 
-      - name: Build Windows installer
-        run: npm run dist:win
+      - name: Create x64 NSIS installer and latest.yml
+        shell: pwsh
+        run: npx electron-builder --win --publish never
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Uncomment once you have a signing certificate:
-          # WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          # WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
-      - name: Upload installer artifact
+      - name: Validate release assets and write SHA256SUMS
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $installer = "dist/VoxRelay-Setup-$version.exe"
+          if (!(Test-Path $installer)) { throw "Missing installer: $installer" }
+          if (!(Test-Path "dist/latest.yml")) { throw "Missing update manifest: dist/latest.yml" }
+          $manifest = Get-Content dist/latest.yml -Raw
+          if ($manifest -notmatch [regex]::Escape("VoxRelay-Setup-$version.exe")) { throw 'Manifest does not reference installer' }
+          $hash = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLower()
+          "$hash  VoxRelay-Setup-$version.exe" | Set-Content dist/SHA256SUMS.txt -Encoding ascii
+          Write-Host "Installer: $installer"
+          Write-Host "SHA-256: $hash"
+          Get-ChildItem dist -File | Select-Object Name, Length | Format-Table
+
+      - name: Upload installer even if release already exists
         uses: actions/upload-artifact@v4
         with:
-          name: installer-windows
+          name: VoxRelay-Windows-x64-${{ steps.version.outputs.tag }}
           path: |
-            dist/*.exe
+            dist/VoxRelay-Setup-*.exe
             dist/latest.yml
             dist/*.blockmap
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
           retention-days: 30
 
-      - name: Create GitHub Release
+      - name: Publish GitHub Release (new versions only)
+        if: steps.version.outputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          name: VoxRelay ${{ github.ref_name }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: VoxRelay ${{ steps.version.outputs.tag }}
           body_path: .github/RELEASE_NOTES.md
+          make_latest: true
           draft: false
           prerelease: false
+          fail_on_unmatched_files: true
           files: |
-            dist/*.exe
+            dist/VoxRelay-Setup-*.exe
             dist/latest.yml
             dist/*.blockmap
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            dist/SHA256SUMS.txt
