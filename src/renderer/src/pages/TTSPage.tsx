@@ -476,7 +476,7 @@ export default function TTSPage() {
   })
 
   return (
-    <div className="mx-auto flex h-full max-w-7xl flex-col">
+    <div className="mx-auto w-full min-w-0 max-w-7xl pb-6">
       <div className="mb-5 flex flex-col gap-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-3">
@@ -560,7 +560,7 @@ export default function TTSPage() {
         speed={speed}
       />
 
-      <div className="mb-4 grid gap-4 lg:grid-cols-[1.6fr_1fr]">
+      <div className="mb-4 grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(260px,1fr)]">
           <CloudVoicePicker
             selectedVoice={cloudVoice?.ShortName ?? storedCloudVoiceShortName ?? null}
             onSelect={handleCloudVoiceSelect}
@@ -599,22 +599,23 @@ export default function TTSPage() {
           </div>
         </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 2xl:flex-row 2xl:items-stretch">
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
-          <div className="terminal-textarea flex min-h-0 flex-1 flex-col p-5">
+      <div data-testid="speak-workspace" className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(300px,360px)]">
+        <div data-testid="speak-composer" className="min-w-0">
+          <div className="terminal-textarea flex min-w-0 flex-col gap-4 p-4">
             <textarea
               ref={textAreaRef}
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t("speak.placeholder")}
-              className="min-h-[280px] flex-1 resize-none bg-transparent text-xl leading-8 text-ink-strong outline-none placeholder:text-ink-mute font-mono"
+              data-testid="speak-textarea"
+              className="block h-44 min-h-36 max-h-72 w-full min-w-0 resize-y overflow-y-auto rounded-md bg-transparent text-lg leading-7 text-ink-strong outline-none placeholder:text-ink-mute font-mono"
               autoFocus
               disabled={voiceSource === 'local' && noReadyModel}
             />
 
-            <div className="mt-4 flex flex-col gap-3 border-t border-chrome-600/70 pt-4 xl:flex-row xl:items-center xl:justify-between">
-              <div className="flex flex-col gap-3">
+            <div className="min-w-0 flex flex-col gap-3 border-t border-chrome-600/70 pt-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <span className="rounded-full border px-3 py-1 text-ink-soft" style={{ borderColor: 'var(--vl-hud-border)', background: 'var(--vl-surface-sunken)' }}>
                     {t('speak.characters', { count: text.length })}
@@ -632,7 +633,7 @@ export default function TTSPage() {
                 </label>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 xl:justify-end">
+              <div data-testid="speak-actions" className="flex min-w-0 flex-wrap items-center gap-2">
                 <button
                   onClick={() => {
                     setText('')
@@ -694,13 +695,14 @@ export default function TTSPage() {
                   )}
                 </button>
               </div>
-              <p className="mt-2 text-right text-xs text-ink-soft" aria-live="polite">
+              <p className="text-xs text-ink-soft" aria-live="polite">
                 {routePreview.label}
               </p>
             </div>
           </div>
+        </div>
 
-          <div className="hud-frame p-4 min-w-0 2xl:w-[380px] 2xl:shrink-0">
+        <aside data-testid="quick-shortcuts" className="hud-frame min-w-0 max-h-[700px] overflow-y-auto p-4">
             <div className="flex items-center gap-2 mb-3">
               <Keyboard className="h-4 w-4" style={{ color: 'var(--vl-state-ready)' }} />
               <h3 className="text-sm font-semibold text-ink-strong">Quick shortcuts</h3>
@@ -758,11 +760,10 @@ export default function TTSPage() {
                 ))}
               </div>
             )}
-          </div>
-        </div>
+        </aside>
 
         {showHistory && (
-          <aside className="panel-surface w-full overflow-auto p-4 xl:w-80">
+          <aside className="panel-surface min-w-0 max-h-72 overflow-y-auto p-4 xl:col-span-2">
             <div className="mb-3 flex items-center gap-2">
               <History className="h-4 w-4 text-brand-300" />
               <h3 className="text-sm font-semibold text-ink-strong">Persistent history</h3>
