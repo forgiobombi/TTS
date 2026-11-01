@@ -31,9 +31,9 @@ describe('generateSecMsGec', () => {
     vi.useRealTimers()
   })
 
-  it('produz hash SHA-256 hex uppercase de 64 chars', () => {
+  it('produces the CS64-SHA256 v2 token', () => {
     const token = generateSecMsGec()
-    expect(token).toMatch(/^[0-9A-F]{64}$/)
+    expect(token).toMatch(/^[0-9A-F]{16}-[0-9A-F]{64}$/)
   })
 
   it('e estavel dentro da mesma janela de 5 minutos', () => {
@@ -61,8 +61,8 @@ describe('generateSecMsGec', () => {
     const token = generateSecMsGec()
     // O token deve ser sempre o mesmo para esse instante (regression check).
     // Se mudar e a chave do Sec-MS-GEC nao mudou, a logica regrediu.
-    expect(token.length).toBe(64)
-    expect(token).toMatch(/^[0-9A-F]+$/)
+    expect(token.length).toBe(81)
+    expect(token).toMatch(/^[0-9A-F]{16}-[0-9A-F]{64}$/)
   })
 })
 
@@ -71,7 +71,7 @@ describe('buildVoicesListUrl', () => {
     const url = buildVoicesListUrl()
     expect(url).toContain('trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4')
     expect(url).toContain('Sec-MS-GEC=')
-    expect(url).toContain('Sec-MS-GEC-Version=1-143.0.3650.75')
+    expect(url).toContain('Sec-MS-GEC-Version=2-143.0.3650.75')
   })
 
   it('aponta para o endpoint correto de listagem', () => {
@@ -86,7 +86,7 @@ describe('buildWssUrl', () => {
     expect(url).toContain(`ConnectionId=${cid}`)
     expect(url).toContain('TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4')
     expect(url).toContain('Sec-MS-GEC=')
-    expect(url).toContain('Sec-MS-GEC-Version=1-143.0.3650.75')
+    expect(url).toContain('Sec-MS-GEC-Version=2-143.0.3650.75')
   })
 
   it('usa protocolo wss e endpoint edge/v1', () => {

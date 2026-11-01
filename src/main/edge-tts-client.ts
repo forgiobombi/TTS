@@ -1,5 +1,5 @@
 import WebSocket from 'ws'
-import { createHash } from 'crypto'
+import { generateSecMsGecV2 } from './edge-tts-drm-v2'
 import { logMain } from './logger'
 
 const TRUSTED_CLIENT_TOKEN = '6A5AA1D4EAFF4E9FB37E23D68491D6F4'
@@ -7,22 +7,13 @@ const TRUSTED_CLIENT_TOKEN = '6A5AA1D4EAFF4E9FB37E23D68491D6F4'
 // clientes que se identificam como Edge antigo; bumpamos quando o 403 voltar.
 const CHROMIUM_FULL_VERSION = '143.0.3650.75'
 const CHROMIUM_MAJOR_VERSION = '143'
-const SEC_MS_GEC_VERSION = `1-${CHROMIUM_FULL_VERSION}`
-const WIN_EPOCH_SECONDS = 11644473600n
-const TICKS_PER_SECOND = 10_000_000n
-const SEC_MS_GEC_WINDOW_SECONDS = 300n
+const SEC_MS_GEC_VERSION = `2-${CHROMIUM_FULL_VERSION}`
 const USER_AGENT = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${CHROMIUM_MAJOR_VERSION}.0.0.0 Safari/537.36 Edg/${CHROMIUM_MAJOR_VERSION}.0.0.0`
 const WSS_BASE = 'wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1'
 const VOICES_BASE = 'https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list'
 
 function generateSecMsGec(): string {
-  // Algoritmo do edge-tts: arredondar segundos-desde-1601 para janela de 5 min,
-  // depois converter para Windows ticks (100ns). Inteiro precisa de BigInt em JS.
-  let seconds = BigInt(Math.floor(Date.now() / 1000)) + WIN_EPOCH_SECONDS
-  seconds -= seconds % SEC_MS_GEC_WINDOW_SECONDS
-  const ticks = seconds * TICKS_PER_SECOND
-  const payload = `${ticks.toString()}${TRUSTED_CLIENT_TOKEN}`
-  return createHash('sha256').update(payload, 'ascii').digest('hex').toUpperCase()
+  return generateSecMsGecV2()
 }
 
 function buildVoicesListUrl(): string {
