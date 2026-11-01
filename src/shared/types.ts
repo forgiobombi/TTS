@@ -46,6 +46,7 @@ export interface TTSRequest {
   voiceId?: string
   speed?: number
   language?: string
+  updateMode?: 'automatic' | 'manual'
   outputDevice?: string
 }
 
@@ -239,6 +240,7 @@ export interface AppSettings {
   profiles?: Profile[]
   activeProfileId?: string
   language?: string
+  updateMode?: 'automatic' | 'manual'
   voiceSource?: VoiceSource
   cloudVoice?: string
   cableDeviceId?: string | null

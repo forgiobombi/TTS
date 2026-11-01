@@ -1,0 +1,45 @@
+name: Sync GitHub Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wiki/**'
+      - '.github/workflows/wiki.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish wiki Markdown
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.wiki.git"
+          if ! git ls-remote "$REMOTE" HEAD >/dev/null 2>&1; then
+            echo "::warning::GitHub Wiki is not initialized. Enable Wiki in repository Settings > Features, create its first Home page in the Wiki tab, then rerun this workflow."
+            exit 0
+          fi
+          git clone --quiet "$REMOTE" .wiki-publish
+          cd .wiki-publish
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          find . -maxdepth 1 -name '*.md' -delete
+          cp ../wiki/*.md .
+          rm -f README.md
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Wiki already up to date."
+            exit 0
+          fi
+          git commit -m "docs: sync VoxRelay wiki from main (${GITHUB_SHA:0:7})"
+          git push origin HEAD:master

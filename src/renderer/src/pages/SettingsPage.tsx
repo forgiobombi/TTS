@@ -13,6 +13,7 @@ import {
   Volume2,
 } from 'lucide-react'
 import AudioOutputPicker from '../components/AudioOutputPicker'
+import UpdatesPanel from '../components/UpdatesPanel'
 import { detectVBCable } from '../utils/virtualMicSetup'
 
 export default function SettingsPage() {
@@ -37,10 +38,12 @@ export default function SettingsPage() {
     phase: 'starting',
   })
   const [vbCableInstalled, setVbCableInstalled] = useState(false)
+  const [appVersion, setAppVersion] = useState('')
 
   useEffect(() => {
     loadStatus()
     loadAudioDevices()
+    void window.electronAPI.getAppVersion().then(setAppVersion).catch(() => undefined)
   }, [])
 
   const loadStatus = async () => {
@@ -289,6 +292,8 @@ export default function SettingsPage() {
         </ul>
       </div>
 
+      <UpdatesPanel />
+
       <div className="hud-frame p-5">
         <h2 className="text-lg font-medium text-ink-strong mb-3">{t('settings.about')}</h2>
         <p className="text-sm text-ink-soft leading-relaxed mb-4">
@@ -306,7 +311,7 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div className="panel-muted p-3">
             <span className="text-ink-mute block mb-1">{t('settings.version')}</span>
-            <span className="text-ink-strong">1.3.0</span>
+            <span className="text-ink-strong">{appVersion || '—'}</span>
           </div>
           <div className="panel-muted p-3">
             <span className="text-ink-mute block mb-1">{t('settings.license')}</span>

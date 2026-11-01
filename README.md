@@ -3,7 +3,7 @@
 [![Tests](https://github.com/forgiobombi/TTS/actions/workflows/test.yml/badge.svg)](https://github.com/forgiobombi/TTS/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-6d5ae6.svg)](LICENSE)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-blue.svg)](https://github.com/forgiobombi/TTS/releases)
-[![Release](https://img.shields.io/github/v/release/skarL007/sound_voice?color=6d5ae6)](https://github.com/forgiobombi/TTS/releases/latest)
+[![Release](https://img.shields.io/github/v/release/forgiobombi/TTS?color=6d5ae6)](https://github.com/forgiobombi/TTS/releases/latest)
 
 **A free, open-source text-to-speech launcher that turns your typing into a real microphone for Discord and any game.**
 
@@ -11,7 +11,7 @@ Type a phrase → hear a natural voice → it comes out of your **virtual microp
 
 > Built for people who can't or prefer not to speak, for gamers who want a voice in chat, and for anyone who needs fast, private, assistive communication.
 
-**🌐 Website: [skarl007.github.io/sound_voice](https://github.com/forgiobombi/TTS)** · **⬇️ [Download](https://github.com/forgiobombi/TTS/releases/latest)**
+**⬇️ [Download VoxRelay for Windows](https://github.com/forgiobombi/TTS/releases/latest)** · **📚 [Wiki](https://github.com/forgiobombi/TTS/wiki)** · **🛠️ [Report an issue](https://github.com/forgiobombi/TTS/issues)**
 
 ---
 
@@ -30,22 +30,22 @@ Type a phrase → hear a natural voice → it comes out of your **virtual microp
 ### Download (recommended)
 
 1. Go to [Releases](https://github.com/forgiobombi/TTS/releases/latest).
-2. Download the latest installer (`VoiceLaunch-TTS-Setup-<version>.exe`).
-3. Run it. The bundled **VB-Audio Virtual Cable** installs automatically if it isn't already present (a Windows restart may be required).
+2. Download the latest installer (`VoxRelay-Setup-<version>.exe`).
+3. Run it. The bundled **VB-Audio Virtual Cable** installer can install the driver if it isn't already present (a Windows restart may be required).
 
 #### Windows SmartScreen
 
-This is an unsigned open-source build, so Windows shows **"Windows protected your PC."** Click **More info → Run anyway**. This is expected for unsigned installers.
+The current open-source installer is **unsigned**, so Windows SmartScreen might warn. Only run a file you trust: verify its source and the release SHA-256 first, and follow your organization's security rules.
 
 #### Verify the download (optional but recommended)
 
-Every release publishes the SHA-256 of the installer. Confirm your download matches:
+Every release includes a `SHA256SUMS.txt` checksum file. Confirm your installer matches:
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\VoiceLaunch-TTS-Setup-<version>.exe
+Get-FileHash -Algorithm SHA256 .\VoxRelay-Setup-<version>.exe
 ```
 
-Compare the output against the hash in the [release notes](https://github.com/forgiobombi/TTS/releases/latest).
+Compare the output against `SHA256SUMS.txt` from the [same GitHub Release](https://github.com/forgiobombi/TTS/releases/latest).
 
 ### System requirements
 
@@ -171,3 +171,14 @@ MIT — see [LICENSE](LICENSE).
 VoxRelay starts with an English interface and an English voice. Choose another UI language in **Settings > App language**, and choose a voice locale separately on **Speak**. English, Italian and Brazilian Portuguese JSON catalogs currently cover the primary screens; untranslated secondary UI falls back to English.
 
 Strings are editable in [the localization folder](src/renderer/src/localization), and can be imported into the free tier of Tolgee, or other JSON localization tools. See [the complete localization guide](docs/LOCALIZATION.md). Run `npm run check:locales` to verify all translations have matching keys and placeholders. No paid service is needed to edit JSON on GitHub.
+
+
+## Automatic and manual updates
+
+Installed Windows releases use public **GitHub Releases** for updates. In **Settings → Updates**, choose **Automatic** (default: check at launch and every six hours, download automatically, install when you close the app) or **Manual** (check, download and install when you decide). Both modes let you open the official release page. Developer builds do not self-update.
+
+Each new release must upload the versioned `.exe`, `latest.yml`, `.blockmap` and `SHA256SUMS.txt`. See [update and release documentation](docs/UPDATES.md).
+
+## GitHub Wiki
+
+The [VoxRelay Wiki](https://github.com/forgiobombi/TTS/wiki) covers installation, Discord and games, supported voices, translating, troubleshooting, safety, contributing and releasing. The versioned Markdown sources live under [wiki/](wiki/) and can be synchronized to GitHub Wiki via **Actions → Sync GitHub Wiki** after the initial Home page has been created.
