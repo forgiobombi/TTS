@@ -12,7 +12,12 @@ import { validateModelId, validateAudioExtension, isHttpUrl } from './security-u
 import { getBundledVBCableInstallerCandidates, isAutoUpdateEnabled, VBCABLE_DOWNLOAD } from './app-config'
 import { listEdgeVoices, synthesizeEdgeTTS } from './edge-tts-client'
 
-const USER_DATA = app.getPath('userData')
+// Electron imports this module before main sets userData. Mirror the explicit
+// test profile override, otherwise use the legacy data path after rebranding.
+const dataFlag = process.argv.find((arg) => arg.startsWith('--user-data-dir='))
+const USER_DATA = dataFlag
+  ? dataFlag.slice('--user-data-dir='.length)
+  : join(app.getPath('appData'), 'VoiceLaunch TTS')
 const MODELS_DIR = join(USER_DATA, 'models')
 const VOICES_DIR = join(USER_DATA, 'voices')
 
@@ -614,7 +619,7 @@ export function registerIpcHandlers(): void {
       new Notification({
         title: safeTitle,
         body: safeBody,
-        icon: join(__dirname, '../../build/icon.png'),
+        icon: app.isPackaged ? join(process.resourcesPath, 'voxrelay-icon.png') : join(__dirname, '../../build/icon.png'),
         silent: false,
       }).show()
     }

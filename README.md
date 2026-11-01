@@ -1,9 +1,9 @@
-# VoiceLaunch TTS
+# VoxRelay
 
-[![Tests](https://github.com/skarL007/sound_voice/actions/workflows/test.yml/badge.svg)](https://github.com/skarL007/sound_voice/actions/workflows/test.yml)
+[![Tests](https://github.com/forgiobombi/TTS/actions/workflows/test.yml/badge.svg)](https://github.com/forgiobombi/TTS/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-6d5ae6.svg)](LICENSE)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-blue.svg)](https://github.com/skarL007/sound_voice/releases)
-[![Release](https://img.shields.io/github/v/release/skarL007/sound_voice?color=6d5ae6)](https://github.com/skarL007/sound_voice/releases/latest)
+[![Platform: Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-blue.svg)](https://github.com/forgiobombi/TTS/releases)
+[![Release](https://img.shields.io/github/v/release/skarL007/sound_voice?color=6d5ae6)](https://github.com/forgiobombi/TTS/releases/latest)
 
 **A free, open-source text-to-speech launcher that turns your typing into a real microphone for Discord and any game.**
 
@@ -11,7 +11,7 @@ Type a phrase → hear a natural voice → it comes out of your **virtual microp
 
 > Built for people who can't or prefer not to speak, for gamers who want a voice in chat, and for anyone who needs fast, private, assistive communication.
 
-**🌐 Website: [skarl007.github.io/sound_voice](https://skarl007.github.io/sound_voice/)** · **⬇️ [Download](https://github.com/skarL007/sound_voice/releases/latest)**
+**🌐 Website: [skarl007.github.io/sound_voice](https://github.com/forgiobombi/TTS)** · **⬇️ [Download](https://github.com/forgiobombi/TTS/releases/latest)**
 
 ---
 
@@ -29,7 +29,7 @@ Type a phrase → hear a natural voice → it comes out of your **virtual microp
 
 ### Download (recommended)
 
-1. Go to [Releases](https://github.com/skarL007/sound_voice/releases/latest).
+1. Go to [Releases](https://github.com/forgiobombi/TTS/releases/latest).
 2. Download the latest installer (`VoiceLaunch-TTS-Setup-<version>.exe`).
 3. Run it. The bundled **VB-Audio Virtual Cable** installs automatically if it isn't already present (a Windows restart may be required).
 
@@ -45,7 +45,7 @@ Every release publishes the SHA-256 of the installer. Confirm your download matc
 Get-FileHash -Algorithm SHA256 .\VoiceLaunch-TTS-Setup-<version>.exe
 ```
 
-Compare the output against the hash in the [release notes](https://github.com/skarL007/sound_voice/releases/latest).
+Compare the output against the hash in the [release notes](https://github.com/forgiobombi/TTS/releases/latest).
 
 ### System requirements
 
@@ -80,8 +80,8 @@ Anyone in the channel now hears your generated voice. The same `CABLE Output` de
 ### Quick start
 
 ```sh
-git clone https://github.com/skarL007/sound_voice.git
-cd sound_voice
+git clone https://github.com/forgiobombi/TTS.git
+cd TTS
 npm install
 npm run dev
 ```
@@ -164,3 +164,10 @@ docs/         architecture, accessibility, virtual mic, release validation
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+
+## Localization
+
+VoxRelay starts with an English interface and an English voice. Choose another UI language in **Settings > App language**, and choose a voice locale separately on **Speak**. English, Italian and Brazilian Portuguese JSON catalogs currently cover the primary screens; untranslated secondary UI falls back to English.
+
+Strings are editable in [the localization folder](src/renderer/src/localization), and can be imported into the free tier of Tolgee, or other JSON localization tools. See [the complete localization guide](docs/LOCALIZATION.md). Run `npm run check:locales` to verify all translations have matching keys and placeholders. No paid service is needed to edit JSON on GitHub.

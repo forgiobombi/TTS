@@ -75,7 +75,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: VoiceLaunch TTS ${{ github.ref_name }}
+          name: VoxRelay ${{ github.ref_name }}
           body_path: .github/RELEASE_NOTES.md
           draft: false
           prerelease: false

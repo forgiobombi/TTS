@@ -238,6 +238,7 @@ export interface AppSettings {
   keepTextAfterSpeak?: boolean
   profiles?: Profile[]
   activeProfileId?: string
+  language?: string
   voiceSource?: VoiceSource
   cloudVoice?: string
   cableDeviceId?: string | null

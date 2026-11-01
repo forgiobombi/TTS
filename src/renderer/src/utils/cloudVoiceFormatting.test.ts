@@ -59,7 +59,7 @@ describe('sortAvailableLocales', () => {
       makeVoice({ Locale: 'ka-GE' }),
     ]
     const sorted = sortAvailableLocales(voices)
-    expect(sorted.slice(0, 2)).toEqual(['pt-BR', 'en-US'])
+    expect(sorted.slice(0, 2)).toEqual(['en-US', 'pt-BR'])
     // resto ordenado alfabeticamente entre o que nao eh popular
     expect(sorted).toContain('zh-CN')
     expect(sorted).toContain('ka-GE')
@@ -72,7 +72,7 @@ describe('sortAvailableLocales', () => {
       makeVoice({ Locale: 'en-US' }),
     ]
     const sorted = sortAvailableLocales(voices)
-    expect(sorted).toEqual(['pt-BR', 'en-US'])
+    expect(sorted).toEqual(['en-US', 'pt-BR'])
   })
 })
 

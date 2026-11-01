@@ -1,6 +1,6 @@
 appId: com.voicelaunch.tts
-productName: VoiceLaunch TTS
-copyright: Copyright © 2026 VoiceLaunch Team
+productName: VoxRelay
+copyright: Copyright © 2026 VoxRelay contributors
 # Garante o instalador do VB-Cable em assets/vbcable antes de empacotar.
 beforePack: scripts/before-pack.cjs
 directories:
@@ -10,6 +10,8 @@ files:
   - out/**/*
   - assets/**/*
 extraResources:
+  - from: build/icon.png
+    to: voxrelay-icon.png
   - from: python_dist/
     to: python_dist/
     filter:
@@ -25,10 +27,10 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: always
   createStartMenuShortcut: true
-  shortcutName: VoiceLaunch TTS
+  shortcutName: VoxRelay
   include: build/installer.nsh
 win:
-  artifactName: VoiceLaunch-TTS-Setup-${version}.${ext}
+  artifactName: VoxRelay-Setup-${version}.${ext}
   target:
     - target: nsis
       arch:
@@ -57,8 +59,8 @@ win:
   # For testing/beta, this is acceptable. For public release, signing is REQUIRED.
 publish:
   provider: github
-  owner: skarL007
-  repo: sound_voice
+  owner: forgiobombi
+  repo: TTS
   channel: latest
   releaseType: release
 extraMetadata:

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { useTranslation } from './i18n'
 import { HashRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom'
 import {
   AlertTriangle,
@@ -37,10 +38,12 @@ import type { BackendStatus, ModelInfo } from '../../shared/types'
 // App focado no online (Edge TTS): jornada começa → fala → atalho → ajustes.
 // As telas locais (instalar modelos, clonar voz) saem da navegacao.
 const navItems = [
-  { to: '/', icon: Volume2, label: 'Speak' },
-  { to: '/shortcuts', icon: Keyboard, label: 'Shortcuts' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
+  { to: '/', icon: Volume2, label: 'nav.speak' },
+  { to: '/shortcuts', icon: Keyboard, label: 'nav.shortcuts' },
+  { to: '/settings', icon: Settings, label: 'nav.settings' },
 ]
+
+const voxrelayIconUrl = new URL('./assets/voxrelay.svg', import.meta.url).href
 
 const INITIAL_BACKEND_STATUS: BackendStatus = {
   running: false,
@@ -182,10 +185,10 @@ function TitleBar({
             background: 'var(--vl-surface-overlay)',
           }}
         >
-          <Mic className="w-4 h-4" style={{ color: 'var(--vl-state-ready)' }} />
+          <img src={voxrelayIconUrl} alt="" className="w-7 h-7 rounded-md" />
         </div>
         <div>
-          <span className="block text-sm font-semibold text-ink-strong">VoiceLaunch TTS</span>
+          <span className="block text-sm font-semibold text-ink-strong">VoxRelay</span>
           <span className="block text-[10px] uppercase tracking-[0.3em] transition-colors" style={{ color: subtitleColor }}>{subtitleText}</span>
         </div>
       </div>
@@ -241,6 +244,7 @@ function TitleBar({
 }
 
 function Sidebar() {
+  const { t } = useTranslation()
   const [appVersion, setAppVersion] = useState<string | null>(null)
 
   useEffect(() => {
@@ -286,7 +290,7 @@ function Sidebar() {
                 className="w-5 h-5 flex-shrink-0"
                 style={isActive ? { color: 'var(--vl-state-ready)' } : undefined}
               />
-              <span className="hidden lg:block text-sm font-medium">{item.label}</span>
+              <span className="hidden lg:block text-sm font-medium">{t(item.label)}</span>
             </>
           )}
         </NavLink>
@@ -294,7 +298,7 @@ function Sidebar() {
 
       <div className="mt-auto px-1 py-3 space-y-3">
         <div className="hidden lg:block text-xs text-ink-mute px-3">
-          <p>VoiceLaunch TTS{appVersion ? ` v${appVersion}` : ''}</p>
+          <p>VoxRelay{appVersion ? ` v${appVersion}` : ''}</p>
           <p>Online voice (Edge TTS) · Open Source</p>
         </div>
       </div>
@@ -612,6 +616,8 @@ function CompactView({ backendStatus }: { backendStatus: BackendStatus }) {
 }
 
 export default function App() {
+  const { language } = useTranslation()
+  useEffect(() => { document.documentElement.lang = language }, [language])
   const alwaysOnTop = useAppStore((state) => state.alwaysOnTop)
   const highContrast = useAppStore((state) => state.highContrast)
   const largeFont = useAppStore((state) => state.largeFont)

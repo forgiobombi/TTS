@@ -1,10 +1,10 @@
 import type { CloudVoice } from '../../../shared/types'
 
 export const POPULAR_LOCALES = [
-  'pt-BR',
-  'pt-PT',
   'en-US',
   'en-GB',
+  'pt-BR',
+  'pt-PT',
   'es-ES',
   'es-MX',
   'fr-FR',
@@ -63,4 +63,17 @@ export function filterCloudVoices(
       )
     })
     .sort((a, b) => shortVoiceLabel(a).localeCompare(shortVoiceLabel(b)))
+}
+
+/** Resolve an English voice from the actual catalog, with a safe fallback. */
+export function pickDefaultEnglishVoice(voices: CloudVoice[]): CloudVoice | null {
+  const preferred = ['en-US-JennyNeural', 'en-US-AriaNeural', 'en-US-GuyNeural', 'en-GB-SoniaNeural']
+  for (const name of preferred) {
+    const voice = voices.find((candidate) => candidate.ShortName === name)
+    if (voice) return voice
+  }
+  return voices.find((voice) => voice.Locale === 'en-US')
+    ?? voices.find((voice) => voice.Locale.startsWith('en-'))
+    ?? voices[0]
+    ?? null
 }

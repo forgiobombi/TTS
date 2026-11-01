@@ -1,6 +1,6 @@
 export const APP_CONFIG = {
-  name: 'VoiceLaunch TTS',
-  version: '1.3.0',
+  name: 'VoxRelay',
+  version: '1.3.1',
   backendUrl: 'http://127.0.0.1:9472',
   wsUrl: 'ws://127.0.0.1:9472/ws/tts-stream',
   supportedModels: [

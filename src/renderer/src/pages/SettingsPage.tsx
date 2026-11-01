@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { BackendStatus } from '../../../shared/types'
 import { useAppStore } from '../stores/appStore'
+import { SUPPORTED_LOCALES, useTranslation } from '../i18n'
 import {
   BookOpen,
   Contrast,
@@ -15,9 +16,11 @@ import AudioOutputPicker from '../components/AudioOutputPicker'
 import { detectVBCable } from '../utils/virtualMicSetup'
 
 export default function SettingsPage() {
+  const { language, t } = useTranslation()
   const {
     highContrast,
     setHighContrast,
+    setLanguage,
     largeFont,
     setLargeFont,
     showExperimentalModels,
@@ -73,12 +76,12 @@ export default function SettingsPage() {
 
   const backendLabel =
     backendStatus.phase === 'running'
-      ? 'Online'
+      ? t('settings.online')
       : backendStatus.phase === 'starting'
-        ? 'Starting'
+        ? t('settings.starting')
         : backendStatus.phase === 'error'
-          ? 'Failed'
-          : 'Offline'
+          ? t('settings.failed')
+          : t('settings.offline')
 
   const statusDotColor = backendStatus.phase === 'running'
     ? 'var(--vl-state-success)'
@@ -90,14 +93,22 @@ export default function SettingsPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
         <Settings className="w-7 h-7" style={{ color: 'var(--vl-state-ready)' }} />
-        <h1 className="text-2xl font-bold text-ink-strong">Settings</h1>
+        <h1 className="text-2xl font-bold text-ink-strong">{t('nav.settings')}</h1>
+      </div>
+
+      <div className="hud-frame p-5">
+        <label htmlFor="app-language" className="block text-sm font-semibold text-ink-strong mb-2">{t('settings.language')}</label>
+        <p className="text-sm text-ink-soft mb-3">{t('settings.languageHelp')}</p>
+        <select id="app-language" value={language} onChange={(e) => setLanguage(e.target.value as typeof language)} className="input-field max-w-xs w-full">
+          {SUPPORTED_LOCALES.map((locale) => <option key={locale.code} value={locale.code}>{locale.name}</option>)}
+        </select>
       </div>
 
       <div className="hud-frame p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <RefreshCw className="w-5 h-5" style={{ color: 'var(--vl-state-ready)' }} />
-            <h2 className="text-lg font-medium text-ink-strong">Python backend (local voices)</h2>
+            <h2 className="text-lg font-medium text-ink-strong">{t('settings.backend')}</h2>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full" style={{ background: statusDotColor }} />
@@ -107,18 +118,18 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-2 gap-4 text-sm mb-4">
           <div className="panel-muted p-3">
-            <span className="text-ink-mute">Port</span>
+            <span className="text-ink-mute">{t('settings.port')}</span>
             <p className="text-ink-strong font-medium font-mono">{backendStatus.port}</p>
           </div>
           <div className="panel-muted p-3">
-            <span className="text-ink-mute">Uptime</span>
+            <span className="text-ink-mute">{t('settings.uptime')}</span>
             <p className="text-ink-strong font-medium font-mono">{backendStatus.uptime}s</p>
           </div>
         </div>
 
         <button onClick={restartBackend} className="btn-secondary text-sm flex items-center gap-2" aria-label="Restart Python backend">
           <RefreshCw className="w-4 h-4" />
-          {backendStatus.phase === 'starting' ? 'Restart backend' : 'Try again'}
+          {backendStatus.phase === 'starting' ? t('settings.restart') : t('settings.retry')}
         </button>
         {backendStatus.lastError && (
           <p className="mt-3 text-sm" style={{ color: 'var(--vl-state-error)' }}>{backendStatus.lastError}</p>
@@ -128,17 +139,16 @@ export default function SettingsPage() {
       <div className="hud-frame p-5">
         <div className="flex items-center gap-3 mb-4">
           <Volume2 className="w-5 h-5" style={{ color: 'var(--vl-state-ready)' }} />
-          <h2 className="text-lg font-medium text-ink-strong">Voice source</h2>
+          <h2 className="text-lg font-medium text-ink-strong">{t('settings.voiceSource')}</h2>
         </div>
         <p className="mb-3 text-sm text-ink-soft">
-          In Auto mode the app uses the online voice (Edge) when there's internet and falls
-          back to the local voice (Kokoro/Piper) when offline or when Edge fails.
+          {t('settings.autoDescription')}
         </p>
         <div className="grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label="Voice source">
           {([
-            { value: 'auto', title: 'Auto (recommended)', hint: 'Online when possible, local when needed' },
-            { value: 'cloud', title: 'Always online', hint: 'Edge TTS; no local fallback' },
-            { value: 'local', title: 'Always local', hint: 'Piper/Kokoro; works offline' },
+            { value: 'auto', title: t('settings.auto'), hint: t('settings.autoHint') },
+            { value: 'cloud', title: t('settings.cloud'), hint: t('settings.cloudHint') },
+            { value: 'local', title: t('settings.local'), hint: t('settings.localHint') },
           ] as const).map((option) => (
             <label
               key={option.value}
@@ -166,7 +176,7 @@ export default function SettingsPage() {
       <div className="hud-frame p-5">
         <div className="flex items-center gap-3 mb-4">
           <Mic className="w-5 h-5" style={{ color: 'var(--vl-state-ready)' }} />
-          <h2 className="text-lg font-medium text-ink-strong">Virtual microphone</h2>
+          <h2 className="text-lg font-medium text-ink-strong">{t('settings.virtualMic')}</h2>
         </div>
 
         <div
@@ -196,7 +206,7 @@ export default function SettingsPage() {
       <div className="hud-frame p-5">
         <div className="flex items-center gap-3 mb-4">
           <Contrast className="w-5 h-5" style={{ color: 'var(--vl-state-ready)' }} />
-          <h2 className="text-lg font-medium text-ink-strong">Accessibility</h2>
+          <h2 className="text-lg font-medium text-ink-strong">{t('settings.accessibility')}</h2>
         </div>
 
         <div className="space-y-3">
@@ -204,8 +214,8 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3">
               <Contrast className="w-5 h-5 text-ink-soft" />
               <div>
-                <p className="text-sm font-medium text-ink-strong">High contrast</p>
-                <p className="text-xs text-ink-mute">High-contrast colors for better visibility</p>
+                <p className="text-sm font-medium text-ink-strong">{t('settings.highContrast')}</p>
+                <p className="text-xs text-ink-mute">{t('settings.highContrastHint')}</p>
               </div>
             </div>
             <input
@@ -220,8 +230,8 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3">
               <Type className="w-5 h-5 text-ink-soft" />
               <div>
-                <p className="text-sm font-medium text-ink-strong">Large fonts</p>
-                <p className="text-xs text-ink-mute">Increases text size across the whole interface</p>
+                <p className="text-sm font-medium text-ink-strong">{t('settings.largeFonts')}</p>
+                <p className="text-xs text-ink-mute">{t('settings.largeFontsHint')}</p>
               </div>
             </div>
             <input
@@ -237,12 +247,12 @@ export default function SettingsPage() {
       <div className="hud-frame p-5">
         <div className="flex items-center gap-3 mb-4">
           <Eye className="w-5 h-5" style={{ color: 'var(--vl-state-ready)' }} />
-          <h2 className="text-lg font-medium text-ink-strong">Local voices</h2>
+          <h2 className="text-lg font-medium text-ink-strong">{t('settings.localVoices')}</h2>
         </div>
 
         <label className="panel-muted flex items-center justify-between p-3 cursor-pointer transition-colors hover:bg-brand-500/8">
           <div>
-            <p className="text-sm font-medium text-ink-strong">Show experimental models</p>
+            <p className="text-sm font-medium text-ink-strong">{t('settings.experimental')}</p>
             <p className="text-xs text-ink-mute">
               Shows Bark, Fish Speech, and other items outside the main flow. They remain off the recommended path for end users.
             </p>
@@ -257,7 +267,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="hud-frame p-5">
-        <h2 className="text-lg font-medium text-ink-strong mb-3">Global shortcuts</h2>
+        <h2 className="text-lg font-medium text-ink-strong mb-3">{t('settings.globalShortcuts')}</h2>
         <p className="text-sm text-ink-soft mb-3">
           Press any combination from any app. Custom editing is coming in the next version.
         </p>
@@ -280,9 +290,9 @@ export default function SettingsPage() {
       </div>
 
       <div className="hud-frame p-5">
-        <h2 className="text-lg font-medium text-ink-strong mb-3">About VoiceLaunch TTS</h2>
+        <h2 className="text-lg font-medium text-ink-strong mb-3">{t('settings.about')}</h2>
         <p className="text-sm text-ink-soft leading-relaxed mb-4">
-          VoiceLaunch TTS is a free and open-source assistive communication tool.
+          VoxRelay is a free and open-source assistive communication tool.
           It helps anyone who prefers, needs, or chooses to turn text into voice with speed, autonomy, and privacy.
         </p>
         <button
@@ -291,23 +301,23 @@ export default function SettingsPage() {
           aria-label="Replay the intro tutorial"
         >
           <BookOpen className="w-4 h-4" />
-          Replay the intro tutorial
+          {t('settings.replay')}
         </button>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div className="panel-muted p-3">
-            <span className="text-ink-mute block mb-1">Version</span>
+            <span className="text-ink-mute block mb-1">{t('settings.version')}</span>
             <span className="text-ink-strong">1.3.0</span>
           </div>
           <div className="panel-muted p-3">
-            <span className="text-ink-mute block mb-1">License</span>
+            <span className="text-ink-mute block mb-1">{t('settings.license')}</span>
             <span className="text-ink-strong">MIT</span>
           </div>
           <div className="panel-muted p-3">
-            <span className="text-ink-mute block mb-1">Main flow</span>
+            <span className="text-ink-mute block mb-1">{t('settings.mainFlow')}</span>
             <span className="text-ink-strong">Piper, Kokoro, virtual microphone</span>
           </div>
           <div className="panel-muted p-3">
-            <span className="text-ink-mute block mb-1">Advanced feature</span>
+            <span className="text-ink-mute block mb-1">{t('settings.advanced')}</span>
             <span className="text-ink-strong">XTTS v2 after validating NVIDIA/CUDA</span>
           </div>
         </div>

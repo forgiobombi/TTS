@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { normalizeLocale, type AppLocale } from '../localization/locale'
 import type { AppSettings, BackendStatus, Profile, VoiceShortcut, VoiceSource } from '../../../shared/types'
 import { DEFAULT_QUICK_PHRASES, MAX_QUICK_PHRASES } from '../utils/communicationState'
 import { EDGE_FAILURE_COOLDOWN_MS } from '../utils/engineRouter'
@@ -31,6 +32,8 @@ function quickPhrasesToShortcuts(phrases: string[], cloudVoice: string | null): 
 }
 
 interface AppState {
+  language: AppLocale
+  setLanguage: (language: AppLocale) => void
   alwaysOnTop: boolean
   setAlwaysOnTop: (value: boolean) => void
   highContrast: boolean
@@ -170,6 +173,11 @@ export function migrateSettings(saved: Partial<AppSettings> | null | undefined):
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
+  language: 'en',
+  setLanguage: (language) => {
+    set({ language })
+    saveToDisk({ language })
+  },
   alwaysOnTop: false,
   setAlwaysOnTop: (value) => {
     set({ alwaysOnTop: value })
@@ -296,6 +304,7 @@ if (typeof window !== 'undefined') {
       window.electronAPI?.saveSettings?.(persistFields)
     }
     useAppStore.setState({
+      language: normalizeLocale(migrated.language),
       alwaysOnTop: migrated.alwaysOnTop ?? false,
       highContrast: migrated.highContrast ?? false,
       largeFont: migrated.largeFont ?? false,
