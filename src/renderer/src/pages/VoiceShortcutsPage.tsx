@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from '../i18n'
 import { Keyboard, Plus } from 'lucide-react'
 import DiscordVRChatGuide from '../components/DiscordVRChatGuide'
 import { HotkeyCapture, ShortcutCard, VoiceSelect } from '../components/ShortcutControls'
@@ -6,6 +7,7 @@ import { useVoiceShortcuts } from '../hooks/useVoiceShortcuts'
 import { toast } from '../utils/toast'
 
 export default function VoiceShortcutsPage() {
+  const { t } = useTranslation()
   const sc = useVoiceShortcuts()
   const [draftText, setDraftText] = useState('')
   const [draftVoice, setDraftVoice] = useState('')
@@ -33,7 +35,7 @@ export default function VoiceShortcutsPage() {
           <Keyboard className="h-5 w-5" style={{ color: 'var(--vl-state-ready)' }} />
         </div>
         <div className="space-y-1">
-          <h1 className="text-page font-bold tracking-tight text-ink-strong">Voice shortcuts</h1>
+          <h1 className="text-page font-bold tracking-tight text-ink-strong">{t('shortcuts.heading')}</h1>
           <p className="max-w-2xl text-sm text-ink-soft">
             The full list of your shortcuts. You can also create shortcuts right on the <strong>Speak</strong> screen.
             Each one triggers the phrase with its key, in any app (Discord, game).
@@ -53,7 +55,7 @@ export default function VoiceShortcutsPage() {
       <div className="hud-frame p-4 space-y-3" style={{ background: 'var(--vl-surface-raised)' }}>
         <div className="flex items-center gap-2">
           <Plus className="h-4 w-4" style={{ color: 'var(--vl-state-ready)' }} />
-          <h2 className="text-sm font-semibold text-ink-strong">New shortcut</h2>
+          <h2 className="text-sm font-semibold text-ink-strong">{t('shortcuts.new')}</h2>
         </div>
         <textarea
           value={draftText}
@@ -64,7 +66,7 @@ export default function VoiceShortcutsPage() {
               handleAdd()
             }
           }}
-          placeholder="What should the shortcut say? (e.g. GG, great match!)"
+          placeholder={t("shortcuts.placeholder")}
           className="terminal-textarea w-full p-3 text-sm min-h-[72px] font-mono"
           maxLength={500}
         />
@@ -73,13 +75,13 @@ export default function VoiceShortcutsPage() {
           <HotkeyCapture value={draftHotkey} onChange={setDraftHotkey} shortcuts={sc.voiceShortcuts} ariaLabel="New shortcut key" />
           <button onClick={handleAdd} className="btn-primary btn-primary--armed inline-flex items-center gap-2 text-sm ml-auto">
             <Plus className="h-4 w-4" />
-            Add
+            {t('shortcuts.add')}
           </button>
         </div>
       </div>
 
       {sc.sortedShortcuts.length === 0 ? (
-        <p className="text-center text-sm text-ink-soft py-6">No shortcuts yet. Create the first one above. 👆</p>
+        <p className="text-center text-sm text-ink-soft py-6">{t('shortcuts.empty')}</p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
           {sc.sortedShortcuts.map((entry) => (

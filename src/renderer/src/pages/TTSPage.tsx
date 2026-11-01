@@ -33,10 +33,12 @@ import { isEdgeHealthy } from '../stores/appStore'
 import { ShortcutCard } from '../components/ShortcutControls'
 import { useVoiceShortcuts } from '../hooks/useVoiceShortcuts'
 import { useCloudVoices } from '../hooks/useCloudVoices'
+import { useTranslation } from '../i18n'
 import { pickDefaultEnglishVoice } from '../utils/cloudVoiceFormatting'
 import { formatHotkeyDisplay } from '../utils/voiceShortcuts'
 
 export default function TTSPage() {
+  const { t } = useTranslation()
   const { voices: cloudVoices } = useCloudVoices()
   const hydrated = useAppStore((state) => state._hydrated)
   const {
@@ -489,9 +491,9 @@ export default function TTSPage() {
               <Volume2 className="h-5 w-5" style={{ color: 'var(--vl-state-ready)' }} />
             </div>
             <div className="space-y-1">
-              <h1 className="text-page font-bold tracking-tight text-ink-strong">Speak</h1>
+              <h1 className="text-page font-bold tracking-tight text-ink-strong">{t('speak.heading')}</h1>
               <p className="max-w-2xl text-sm text-ink-soft">
-                Main console for composing, repeating, and quick-firing voice.
+                {t('speak.subtitle')}
               </p>
             </div>
           </div>
@@ -505,7 +507,7 @@ export default function TTSPage() {
               title="Sends the voice as a virtual microphone to Discord, Zoom, and games"
             >
               <Mic className="h-4 w-4" />
-              {virtualMicEnabled ? 'Virtual mic active' : 'Enable virtual mic'}
+              {virtualMicEnabled ? t('speak.micActive') : t('speak.enableMic')}
             </button>
             <button
               onClick={() => setShowHistory(!showHistory)}
@@ -516,7 +518,7 @@ export default function TTSPage() {
               aria-label="Phrase history"
             >
               <History className="h-4 w-4" />
-              {showHistory ? 'Hide history' : 'Show history'}
+              {showHistory ? t('speak.hideHistory') : t('speak.showHistory')}
             </button>
             <button
               onClick={exportHistory}
@@ -526,7 +528,7 @@ export default function TTSPage() {
               aria-label="Export history as CSV"
             >
               <Download className="h-4 w-4" />
-              Export CSV
+              {t('speak.export')}
             </button>
           </div>
         </div>
@@ -536,16 +538,16 @@ export default function TTSPage() {
             <Cloud className="h-3.5 w-3.5" />
             {cloudVoice
               ? cloudVoice.FriendlyName.replace(/^Microsoft\s+/i, '').replace(/\s+Online\s+\(Natural\).*$/i, '')
-              : 'Choose a voice'}
+              : t('speak.chooseVoice')}
           </span>
           <span className={`status-pill ${virtualMicEnabled ? 'status-pill--live' : ''}`}>
             <Mic className="h-3.5 w-3.5" />
-            {virtualMicEnabled ? 'Virtual mic on' : 'Virtual mic off'}
+            {virtualMicEnabled ? t('speak.micOn') : t('speak.micOff')}
           </span>
           {(isSynthesizing || isSpeaking) && (
             <span className="status-pill status-pill--live">
               {isSynthesizing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MonitorUp className="h-3.5 w-3.5" />}
-              {isSynthesizing ? 'Generating audio...' : 'Speaking now'}
+              {isSynthesizing ? t('speak.generating') : t('speak.speaking')}
             </span>
           )}
         </div>
@@ -566,7 +568,7 @@ export default function TTSPage() {
           <div className="hud-frame p-4 space-y-3 min-w-0">
             <div className="flex items-center gap-2">
               <Volume2 className="h-4 w-4" style={{ color: 'var(--vl-state-ready)' }} />
-              <h3 className="text-sm font-semibold text-ink-strong">Speed</h3>
+              <h3 className="text-sm font-semibold text-ink-strong">{t('speak.speed')}</h3>
             </div>
             <div className="flex items-center gap-3">
               <input
@@ -587,11 +589,11 @@ export default function TTSPage() {
               <span className="w-12 text-sm text-ink-body font-mono">{speed.toFixed(1)}x</span>
             </div>
             <p className="text-xs text-ink-soft">
-              Online voices come from Microsoft Edge TTS. They work instantly, with no installation, but need internet.
+              {t('speak.cloudNote')}
             </p>
             {cloudVoice && (
               <div className="panel-muted p-2.5 text-xs text-ink-body">
-                Selected voice: <span className="font-medium text-ink-strong">{cloudVoice.FriendlyName.replace(/^Microsoft\s+/i, '')}</span>
+                {t('speak.selectedVoice')} <span className="font-medium text-ink-strong">{cloudVoice.FriendlyName.replace(/^Microsoft\s+/i, '')}</span>
               </div>
             )}
           </div>
@@ -605,7 +607,7 @@ export default function TTSPage() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="> type a phrase. Enter sends. Shift+Enter for a new line."
+              placeholder={t("speak.placeholder")}
               className="min-h-[280px] flex-1 resize-none bg-transparent text-xl leading-8 text-ink-strong outline-none placeholder:text-ink-mute font-mono"
               autoFocus
               disabled={voiceSource === 'local' && noReadyModel}
@@ -615,7 +617,7 @@ export default function TTSPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <span className="rounded-full border px-3 py-1 text-ink-soft" style={{ borderColor: 'var(--vl-hud-border)', background: 'var(--vl-surface-sunken)' }}>
-                    {text.length} characters
+                    {t('speak.characters', { count: text.length })}
                   </span>
                 </div>
 
@@ -626,7 +628,7 @@ export default function TTSPage() {
                     onChange={(event) => setKeepTextAfterSpeak(event.target.checked)}
                     className="accent-brand-500"
                   />
-                  Keep text after speaking
+                  {t('speak.keepText')}
                 </label>
               </div>
 
@@ -639,7 +641,7 @@ export default function TTSPage() {
                   className="btn-secondary text-sm"
                   aria-label="Clear text"
                 >
-                  Clear
+                  {t('speak.clear')}
                 </button>
                 <VirtualKeyboard
                   onKeyPress={(key) => {
@@ -687,7 +689,7 @@ export default function TTSPage() {
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      Speak
+                      {t('speak.heading')}
                     </>
                   )}
                 </button>
