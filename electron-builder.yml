@@ -10,6 +10,8 @@ files:
   - out/**/*
   - assets/**/*
 extraResources:
+  - from: build/icon.ico
+    to: voxrelay-icon.ico
   - from: build/icon.png
     to: voxrelay-icon.png
   - from: python_dist/
@@ -28,6 +30,9 @@ nsis:
   createDesktopShortcut: always
   createStartMenuShortcut: true
   shortcutName: VoxRelay
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
   include: build/installer.nsh
 win:
   artifactName: VoxRelay-Setup-${version}.${ext}
@@ -37,7 +42,8 @@ win:
         - x64
   icon: build/icon.ico
   requestedExecutionLevel: requireAdministrator
-  signAndEditExecutable: false
+  # Embed the custom icon and product version resources even in unsigned builds.
+  signAndEditExecutable: true
   # Code Signing Configuration
   # --------------------------
   # Option 1: Standard Code Signing (PFX file)

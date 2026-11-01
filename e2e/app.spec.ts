@@ -90,3 +90,41 @@ test('a created voice shortcut persists across relaunch', async () => {
   await second.page.getByRole('link', { name: 'Shortcuts' }).click()
   await expect(second.page.getByText(phrase).first()).toBeVisible()
 })
+
+
+test('Speak composer and shortcut cards stay separated at desktop and laptop widths', async () => {
+  const launched = await launchApp()
+  app = launched.app
+  userDataDir = launched.userDataDir
+  const { page } = launched
+  await dismissOnboarding(page)
+
+  for (const width of [1440, 1024]) {
+    await page.setViewportSize({ width, height: 900 })
+    const composer = page.getByTestId('speak-composer')
+    const editor = page.getByTestId('speak-textarea')
+    const shortcuts = page.getByTestId('quick-shortcuts')
+    const actions = page.getByTestId('speak-actions')
+    await expect(composer).toBeVisible()
+    await expect(editor).toBeVisible()
+    await expect(shortcuts).toBeVisible()
+
+    const [co, ed, sh, ac] = await Promise.all([
+      composer.boundingBox(), editor.boundingBox(), shortcuts.boundingBox(), actions.boundingBox(),
+    ])
+    expect(co).not.toBeNull()
+    expect(ed).not.toBeNull()
+    expect(sh).not.toBeNull()
+    expect(ac).not.toBeNull()
+    if (!co || !ed || !sh || !ac) return
+
+    expect(ed.height).toBeLessThanOrEqual(300)
+    expect(ed.x + ed.width).toBeLessThanOrEqual(co.x + co.width + 2)
+    expect(ac.y).toBeGreaterThanOrEqual(ed.y + ed.height - 2)
+    expect(ac.y + ac.height).toBeLessThanOrEqual(co.y + co.height + 2)
+    // Either a proper side-by-side layout or a stacked layout, never overlapping.
+    const horizontal = co.x + co.width <= sh.x + 2
+    const vertical = co.y + co.height <= sh.y + 2
+    expect(horizontal || vertical).toBe(true)
+  }
+})

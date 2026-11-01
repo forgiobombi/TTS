@@ -25,7 +25,9 @@ function createWindow(): void {
     autoHideMenuBar: true,
     frame: false,
     title: 'VoxRelay',
-    icon: app.isPackaged ? join(process.resourcesPath, 'voxrelay-icon.png') : join(__dirname, '../../build/icon.png'),
+    icon: app.isPackaged && process.platform === 'win32'
+      ? join(process.resourcesPath, 'voxrelay-icon.ico')
+      : join(__dirname, '../../build/icon.png'),
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'hidden',
     backgroundColor: '#06030F',
     webPreferences: {

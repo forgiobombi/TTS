@@ -109,6 +109,14 @@ jobs:
           $installer = "dist/VoxRelay-Setup-$version.exe"
           if (!(Test-Path $installer)) { throw "Missing installer: $installer" }
           if (!(Test-Path "dist/latest.yml")) { throw "Missing update manifest: dist/latest.yml" }
+          $exe = "dist/win-unpacked/VoxRelay.exe"
+          if (!(Test-Path $exe)) { throw "Missing packaged application executable: $exe" }
+          $metadata = (Get-Item $exe).VersionInfo
+          if ($metadata.ProductName -ne "VoxRelay") { throw "Incorrect executable product name: $($metadata.ProductName)" }
+          Add-Type -AssemblyName System.Drawing
+          $embeddedIcon = [System.Drawing.Icon]::ExtractAssociatedIcon((Resolve-Path $exe).Path)
+          if ($null -eq $embeddedIcon) { throw "The Windows executable lacks an associated icon" }
+          $embeddedIcon.Dispose()
           $manifest = Get-Content dist/latest.yml -Raw
           if ($manifest -notmatch [regex]::Escape("VoxRelay-Setup-$version.exe")) { throw 'Manifest does not reference installer' }
           $hash = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLower()
