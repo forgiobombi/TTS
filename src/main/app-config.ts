@@ -51,7 +51,7 @@ export const VBCABLE_DOWNLOAD = {
 } as const
 
 export function isAutoUpdateEnabled(): boolean {
-  return app.isPackaged && process.env.VOICELAUNCH_ENABLE_AUTO_UPDATE === 'true'
+  return app.isPackaged && process.platform === 'win32' && process.env.VOICELAUNCH_ENABLE_AUTO_UPDATE !== 'false'
 }
 
 export function getModelRegistryPath(): string {
@@ -60,7 +60,7 @@ export function getModelRegistryPath(): string {
 
 export const APP_CONFIG = {
   name: 'VoxRelay',
-  version: '1.3.1',
+  version: '1.3.2',
   backendPort: 9472,
   backendHost: '127.0.0.1',
   get userDataPath() { return getUserData() },

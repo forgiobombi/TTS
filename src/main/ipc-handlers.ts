@@ -625,7 +625,26 @@ export function registerIpcHandlers(): void {
     }
   })
 
-  // Auto-updater
+  // Public GitHub Releases updater. No GitHub account/token is needed on user PCs.
+  ipcMain.handle('updater:get-mode', () => loadSettings().updateMode === 'manual' ? 'manual' : 'automatic')
+  ipcMain.handle('updater:set-mode', (_event, mode: string) => {
+    if (mode !== 'automatic' && mode !== 'manual') return { success: false, error: 'Invalid update mode' }
+    saveSettings({ updateMode: mode })
+    if (isAutoUpdateEnabled()) {
+      autoUpdater.autoDownload = mode === 'automatic'
+      autoUpdater.autoInstallOnAppQuit = mode === 'automatic'
+    }
+    return { success: true, mode }
+  })
+  ipcMain.handle('updater:download', async () => {
+    if (!isAutoUpdateEnabled()) return { success: false, error: 'Updates require the installed Windows app.' }
+    try {
+      await autoUpdater.downloadUpdate()
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: String(error) }
+    }
+  })
   ipcMain.handle('updater:check', async () => {
     if (!isAutoUpdateEnabled()) {
       return { success: false, error: 'Auto-update disabled for this build.' }

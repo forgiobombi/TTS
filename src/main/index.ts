@@ -69,8 +69,10 @@ function setupAutoUpdater(): void {
     error: (msg: string) => logMain('ERROR', `[updater] ${msg}`),
   } as any
 
-  autoUpdater.autoDownload = true
-  autoUpdater.autoInstallOnAppQuit = true
+  const automatic = () => loadSettings().updateMode !== 'manual'
+  autoUpdater.autoDownload = automatic()
+  autoUpdater.autoInstallOnAppQuit = automatic()
+  autoUpdater.allowPrerelease = false
 
   autoUpdater.on('checking-for-update', () => {
     mainWindow?.webContents.send('updater:checking')
@@ -109,12 +111,15 @@ function setupAutoUpdater(): void {
     mainWindow?.webContents.send('updater:error', err.message)
   })
 
-  // Check for updates 10 seconds after app start (give time for window to load)
-  setTimeout(() => {
-    autoUpdater.checkForUpdates().catch(() => {
-      // Silent fail - no internet or no update server configured
+  // Check on startup and every six hours in automatic mode only.
+  const checkAutomatically = () => {
+    if (!automatic()) return
+    void autoUpdater.checkForUpdates().catch((error: unknown) => {
+      logMain('WARN', `Automatic update check failed: ${String(error)}`)
     })
-  }, 10000)
+  }
+  setTimeout(checkAutomatically, 10000)
+  setInterval(checkAutomatically, 6 * 60 * 60 * 1000)
 }
 
 // Retain the original VoiceLaunch settings/models path across the product rename.

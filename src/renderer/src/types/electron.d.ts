@@ -66,6 +66,9 @@ export interface Api {
   getBackendStatus: () => Promise<BackendStatus>
   restartBackend: () => Promise<boolean>
   showNotification: (title: string, body: string) => void
+  getUpdateMode: () => Promise<'automatic' | 'manual'>
+  setUpdateMode: (mode: 'automatic' | 'manual') => Promise<{ success: boolean; mode?: string; error?: string }>
+  downloadUpdate: () => Promise<{ success: boolean; error?: string }>
   checkForUpdates: () => Promise<{ success: boolean; updateInfo?: any; error?: string }>
   installUpdate: () => Promise<boolean>
   getAppVersion: () => Promise<string>
