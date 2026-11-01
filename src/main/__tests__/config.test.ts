@@ -44,8 +44,8 @@ describe('release metadata', () => {
     const publishConfig = parsePublishConfig(electronBuilder)
 
     expect(repository).toEqual({
-      owner: 'skarL007',
-      repo: 'sound_voice',
+      owner: 'forgiobombi',
+      repo: 'TTS',
     })
     expect(publishConfig).toEqual(repository)
   })
