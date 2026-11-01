@@ -1,0 +1,321 @@
+# VoiceLaunch TTS - Estado do Projeto
+
+> Atualizado em: 2026-06-02
+> Status: **PIVO ONLINE-FIRST (EDGE TTS) + MIC VIRTUAL AUTO-INSTALL + ATALHOS DE VOZ UNIFICADOS — VER SNAPSHOT 2026-06-02**
+
+---
+
+## Estado Atual Para Retomada
+
+- **Fonte de verdade desta pasta:** este checkout voltou a ser um repositorio Git valido; a continuidade agora depende de `codex.md`, `README.md`, `CHANGELOG.md`, `docs/` e do remoto publicado.
+- **Estado atual de 2026-05-15:** use primeiro o `Snapshot de Continuidade - 2026-05-15` no fim deste arquivo; ele registra o closeout como `DONE_WITH_CONCERNS` e separa o que foi rerodado do que continuou pendente.
+- **Fluxo principal real do beta core:** `Piper + Kokoro` formam a trilha obrigatoria; `Piper` continua sendo a entrada mais leve e `Kokoro` o segundo motor obrigatorio da validacao principal. `XTTS v2` segue apenas como trilha avancada em `NVIDIA/CUDA`.
+- **Fora do caminho principal:** `MeloTTS`, `Fish Speech` e `Bark` seguem experimentais e ocultos por padrao.
+- **Ultima verificacao empacotada confirmada (2026-05-12):** `npm test` = **21 testes passando**; `npm run build` = **build OK**.
+- **Ultima verificacao de distribuicao confirmada (2026-05-12):** `npm run dist:win` = **installer NSIS atualizado gerado** com nome canonico alinhado ao `latest.yml`.
+- **Ultima verificacao de runtime empacotado confirmada (2026-05-12):** `npm run dev` e `dist/win-unpacked/VoiceLaunch TTS.exe` subiram em execucao real.
+- **Ultima validacao extra de runtime empacotado confirmada (2026-05-12):** o backend standalone respondeu em `/health` e o fallback de porta foi exercitado com sucesso quando `9472` estava ocupado.
+- **Artefato canonico da rodada empacotada confirmada:** `dist/VoiceLaunch-TTS-Setup-1.0.0.exe`, gerado em `2026-05-12 17:45`.
+- **Ultima referencia publicada confirmada:** `https://github.com/skarL007/sound_voice` em `main`, com snapshot publicado confirmado no commit `0462a62` (`Polish repo docs and inclusive positioning`).
+
+---
+
+## O Que Foi Endurecido Nesta Rodada
+
+### Produto e UX
+
+- [x] A janela principal agora abre antes do backend Python.
+- [x] O app mostra estado de backend em inicializacao/erro com acao de retry.
+- [x] Os atalhos globais de frases rapidas agora usam apenas modelos realmente visiveis e instalados no MVP.
+- [x] O modo compacto bloqueia a fala de forma honesta enquanto o backend nao estiver pronto.
+
+### Microfone Virtual
+
+- [x] O fluxo do VB-Cable ficou honesto: tenta o instalador embutido, e cai para o site oficial quando o `.exe` nao estiver presente no pacote.
+- [x] A UI de Configuracoes passou a comunicar esse fallback de forma explicita.
+
+### Empacotamento e Distribuicao
+
+- [x] O nome canonico do installer foi alinhado com `latest.yml`.
+- [x] `python_dist` foi removido do `app.asar` e ficou apenas em `extraResources`, eliminando duplicacao no pacote.
+- [x] O tamanho do instalador caiu fortemente depois dessa correcao.
+- [x] Auto-update ficou desligado por padrao ate existir trilha operacional real de release.
+- [x] O backend standalone agora usa `model-registry.json` exposto via `extraResources`.
+- [x] O backend escolhe uma porta livre quando `9472` estiver ocupada.
+
+---
+
+## Funcionalidades com validacao empacotada confirmada em 2026-05-12
+
+### Core TTS
+
+- [x] Piper funcionando end-to-end
+- [x] Kokoro funcionando end-to-end
+- [x] API `/tts` retornando `audioPath` + `duration`
+- [x] Playback local via `/play`
+- [x] Cancelamento de TTS durante execucao
+
+### Comunicacao Assistiva
+
+- [x] Historico persistente
+- [x] Rascunho persistente
+- [x] Frases rapidas personalizaveis
+- [x] Atalhos globais `Ctrl+Shift+V`, `Ctrl+Shift+1..9`, `Ctrl+Shift+M`, `Ctrl+Shift+S`
+- [x] Comunicador compacto com recentes e estado de mic virtual
+- [x] Alto contraste, fonte grande e foco visivel
+
+### Build e Distribuicao confirmados em 2026-05-12
+
+- [x] Installer NSIS em `dist/VoiceLaunch-TTS-Setup-1.0.0.exe`
+- [x] `win-unpacked` validado em runtime real
+- [x] `latest.yml` consistente com o nome do artefato
+- [x] Backend Python empacotado como recurso standalone
+
+---
+
+## Artefatos Relevantes
+
+```text
+dist/
+  VoiceLaunch-TTS-Setup-1.0.0.exe        <- 467,475,211 bytes
+  VoiceLaunch-TTS-Setup-1.0.0.exe.blockmap
+  latest.yml
+  win-unpacked/
+```
+
+### Integridade do pacote beta atual
+
+- **SHA-256:** `A944D5D0F1697F76B3E94624F5C561C7D15A5AF2F5E14E05ABC3EC4927D35DF8`
+- **SHA-512:** `D34A67B260D5A9698A45EF5AA350BC25EF0D690AE6A277F1F7E538272D812582B815FBF704F1DDD76334ADACAE7FD9EA27E15F3A08EE4B5FB5D1AF15A03FF736`
+- **Auto-update metadata:** `dist/latest.yml` aponta para `VoiceLaunch-TTS-Setup-1.0.0.exe`
+- **Observacao operacional:** o diretorio `dist/` ainda pode conter um installer legado com espacos no nome de builds anteriores; o artefato canonico desta rodada e o arquivo hifenizado.
+
+---
+
+## Problemas Conhecidos
+
+- **Installer nao assinado:** aceitavel para beta fechado, mas ainda bloqueia release publica sem aviso do SmartScreen.
+- **Auto-update:** desligado por padrao nesta fase; so deve ser ligado quando existir fluxo real de release/publicacao.
+- **XTTS v2:** continua pesado e dependente de `NVIDIA/CUDA`; nao faz parte da primeira experiencia obrigatoria.
+- **MeloTTS:** fora do fluxo principal; a instalacao ainda nao e confiavel.
+- **Downloads grandes:** continuam sujeitos a rate-limit externo.
+
+---
+
+## Documentacao e posicionamento publico
+
+- [x] `README.md` reescrito para refletir o fluxo real do MVP local
+- [x] Linguagem publica ajustada para um tom mais humano e inclusivo
+- [x] Fluxograma Mermaid adicionado ao `README.md`
+- [x] `package.json` alinhado com o repositorio real publicado no GitHub
+- [x] Docs publicas e copy institucional alinhadas ao posicionamento atual do produto
+
+---
+
+## Proximo Foco Recomendado
+
+1. Resolver o bloqueio local de Python/venv/temporarios ou mover a prova para uma maquina limpa controlada.
+2. Rerodar `npm run dist:win` para gerar um pacote novo e auditavel apos o closeout de `2026-05-15`.
+3. Revalidar o backend empacotado (`/health`, `/models` e fallback de porta) usando esse pacote novo.
+4. Executar a trilha **Core** de `docs/BETA_PROGRAM.md` em maquina limpa, incluindo VB-Cable + Discord/Zoom.
+5. Definir um canal direto de suporte ao beta para testers nao tecnicos.
+6. So depois decidir sobre beta ampliado, XTTS no pacote final e assinatura de codigo.
+7. Na proxima retomada, usar `README.md` como entrada publica e `codex.md` como checkpoint operacional.
+
+---
+
+## Snapshot de Continuidade - 2026-05-12
+
+### O que foi validado nesta retomada
+
+- [x] `npm test` continua verde com **21/21** testes passando.
+- [x] `npm run build` continua verde.
+- [x] `npm run dist:win` foi reexecutado com sucesso nesta maquina.
+- [x] O runtime empacotado em `dist/win-unpacked/VoiceLaunch TTS.exe` voltou a subir em execucao real.
+- [x] O backend standalone respondeu novamente em `/health` com `{"status":"ok","version":"1.0.0"}`.
+
+### O que foi corrigido nos checkpoints/docs
+
+- [x] `codex.md` e `docs/BETA_PROGRAM.md` foram alinhados ao artefato atual gerado em `2026-05-12 17:45`.
+- [x] O commit publicado correto em `origin/main` foi registrado como `0462a62`.
+- [x] A URL de `GitHub Issues` em `docs/BETA_PROGRAM.md` foi corrigida para `https://github.com/skarL007/sound_voice/issues`.
+- [x] `README.md`, `docs/HARNESS.md` e `AGENTS.md` foram alinhados ao path real de dados/logs do app empacotado: `%APPDATA%\\voicelaunch-tts\\`.
+
+### Onde paramos no produto
+
+- O escopo da proxima rodada foi restringido explicitamente para **manter o app como launcher/orquestrador**, sem virar uma UX separada por framework.
+- O problema levantado pelo usuario para a proxima implementacao continua aberto e cobre:
+  - catalogo real de vozes por framework, com idioma e genero quando o runtime souber informar;
+  - feedback visual de `modelo carregando` e `modelo carregado`;
+  - melhoria do layout da experiencia de fala;
+  - configuracao de tecla/atalho para frases rapidas;
+  - validacao mais forte do microfone virtual.
+- **Nenhuma implementacao dessas features novas foi iniciada ainda** nesta rodada; a conversa parou na definicao do comportamento de carregamento de modelo no launcher.
+
+### Decisao pendente para a proxima sessao
+
+- Fechar qual sera o comportamento de carregamento de modelo no launcher:
+  1. carregar automaticamente ao falar;
+  2. exigir botoes explicitos de `Carregar` / `Descarregar`;
+  3. suportar ambos.
+
+### Observacao operacional
+
+- O worktree local ficou com mudancas de documentacao ainda nao commitadas em `AGENTS.md`, `README.md`, `codex.md`, `docs/BETA_PROGRAM.md` e `docs/HARNESS.md`.
+- A pasta `.superpowers/` apareceu apenas por causa do companion visual usado para brainstorming e deve ser tratada como artefato local, nao como estado funcional do produto.
+
+---
+
+## Snapshot de Continuidade - 2026-05-15
+
+### O que foi revalidado nesta auditoria
+
+- [x] `cmd /c npm run test` passou novamente em `2026-05-15` com **28/28** testes.
+- [x] `cmd /c npm run build` passou novamente em `2026-05-15`.
+- [x] `cmd /c npm run dist:win` foi reexecutado com sucesso em `2026-05-15`.
+- [x] O backend empacotado foi revalidado nesta maquina em `2026-05-15` via `scripts/smoke-packaged-backend.ps1 -Port 9482`.
+- [x] O app empacotado em `dist/win-unpacked/VoiceLaunch TTS.exe` voltou a responder em `/health` e `/models` na porta `9472`.
+- [x] O fallback automatico de porta do app empacotado foi revalidado em `2026-05-15`, com `9472` ocupado e backend subindo em `9473`.
+
+### Veredito real desta rodada
+
+- Status desta rodada: **DONE_WITH_CONCERNS**.
+- As Tasks 1-3 do plano de fechamento foram **resolvidas no codigo** e aprovadas em revisao no repo em `2026-05-15`:
+  - `93a6553` `fix: align voice clone runtime path contract`
+  - `52122b0` `build: stabilize packaged backend inputs`
+  - `7fd6960` `build: harden backend smoke and cleanup`
+  - `cf7daef` `fix: harden voice deletion and external links`
+  - `3325ce4` `test: cover security validators`
+- A Task 2 (`build Python deterministico para o beta core`) foi **fechada nesta maquina** com um workaround de build isolado em `scripts/build-python-venv.bat` e `scripts/python-build-hooks/sitecustomize.py`, contornando o problema local de ACL em diretórios criados por `tempfile` no Windows durante `ensurepip` / `pip`.
+- O projeto segue como **MVP local tecnicamente forte e revalidado no empacotamento**, mas **ainda nao fechado** para beta externo mais amplo.
+- Os gates ainda abertos em `2026-05-15` sao:
+  - instalacao em maquina Windows limpa;
+  - VB-Cable + Discord/Zoom em maquina limpa;
+  - canal de suporte beta para testers nao tecnicos.
+
+### Artefato de fechamento criado
+
+- Plano novo salvo em `docs/superpowers/plans/2026-05-15-voicelaunch-closeout.md`.
+- O foco do plano foi reduzido para a reta final do **launcher-only beta core**, sem reabrir expansao de escopo.
+
+### Proximo passo recomendado
+
+1. Validar o instalador novo em maquina Windows limpa.
+2. Rodar a trilha beta core em maquina limpa com `Piper + Kokoro + VB-Cable + Discord/Zoom`.
+3. Definir o canal direto de suporte beta antes de convite externo mais amplo.
+
+### Onde paramos nesta sessao
+
+- O merge local do trabalho foi concluido em `main` no commit `2059849` (`Merge branch 'codex/launcher-docs-cleanup'`).
+- O branch de trabalho `codex/launcher-docs-cleanup` continua existindo localmente em `f8dc556`, porque nao foi deletado com `-d` enquanto o upstream remoto dele nao contem os commits novos.
+- O estado local no fim desta sessao ficou `main...origin/main [ahead 16]`, sem `push`.
+- Os gates tecnicos desta maquina ficaram verdes na rodada de `2026-05-15`:
+  - `cmd /c npm run test`
+  - `cmd /c npm run build`
+  - `cmd /c npm run dist:win`
+  - `scripts/smoke-packaged-backend.ps1 -Port 9482`
+  - smoke do app empacotado em `dist/win-unpacked/VoiceLaunch TTS.exe` com `/health` e `/models`
+  - fallback automatico de porta validado com `9472` ocupado e backend subindo em `9473`
+- O pacote canonico validado nesta sessao foi `dist/VoiceLaunch-TTS-Setup-1.0.0.exe`, com `latest.yml` regenerado em `2026-05-15`.
+- O que continua pendente nao e mais bloqueio tecnico desta maquina:
+  - instalacao em maquina Windows limpa;
+  - VB-Cable + Discord/Zoom em maquina limpa;
+  - canal direto de suporte beta para tester nao tecnico.
+- O worktree ainda tem lixo local antigo que nao foi limpo por seguranca, principalmente `.tmp-manual/` e diretorios temporarios inacessiveis; nao tratar isso como estado funcional do produto.
+
+---
+
+## Snapshot de Continuidade - 2026-05-19
+
+### Rodada de redesign roxo/gamer + bugfix executada
+
+- **Brand color migrada para roxo neon** (`#8B5CF6` pivo). Cyan virou `secondary`, reservado para estados ao vivo (mic transmitindo, falando agora, info toast).
+- **Sistema de design ampliado** em `tailwind.config.js` e `src/renderer/src/index.css` com tokens semanticos (`surface-*`, `ink-*`, `state-*`, `hud-*`), classes utilitarias (`hud-frame`, `hud-frame--hero`, `scanline`, `neon-glow`, `badge-shortcut`, `tier-badge`, `terminal-textarea`, `btn-ghost`, `status-pill--{ready,live,warn,error,success}`), animacoes (`glow-pulse`, `text-shimmer`, `scanline-sweep`, `hud-flicker`) e respeito a `prefers-reduced-motion` + `high-contrast`.
+- **Bugfixes P0/P1 entregues:**
+  - `model:load`/`model:unload` agora validam `modelId` via `validateModelId` (paridade com `model:uninstall`).
+  - `buildHistoryItem` usa `crypto.randomUUID()` com fallback determinístico — sem colisao em rajada.
+  - `setupGlobalShortcuts` captura conflitos e envia `global:shortcut-conflict` ao renderer; App.tsx mostra toast.
+  - Foco do textarea no `TTSPage.speak()` finally — fluxo "digitar→Enter→falar→digitar" sem clique extra.
+  - Toast reposicionado em modo compacto (`top-2 left-2 right-2`, 1 toast no maximo) para nao cobrir o botao Falar em 480x420.
+- **Recursos novos gamer/Discord:**
+  - **Perfis** `padrao` e `jogo` com `setActiveProfile`, migration preservando `quickPhrases` legados; switch via `ProfileSwitcher` na sidebar; `AppSettings.schemaVersion = 1`.
+  - **`DiscordReadyBanner`** ativado em TTSPage apos ligar mic virtual, com botao **Testar agora** que dispara síntese curta para validar o pipeline Discord.
+  - **Badges de atalho 1..9** sobre as quick phrases (TTSPage + CompactView).
+  - **CompactView com mini-controles** (seletor de modelo + slider de speed colapsavel via "•••").
+  - **HomePage HUD 2x2** (Backend, Modelos prontos, Mic Virtual, Atalho aberto) + Quick Launch (Falar agora / Modo compacto / Configurar atalhos).
+  - **BackendBanner com diagnostics expansíveis** (Python path, executor, URL, detail) + atalho para `#/logs`.
+  - **LogsPage com syntax highlight roxo/cyan/amber/coral**, filtro por nivel, busca e truncamento defensivo em 2000 linhas.
+- **Cobertura de testes:** 38/38 passando. Novos: `buildHistoryItem` produz 1.000 IDs unicos sem colisao; `migrateSettings` cria perfis padrao, preserva `quickPhrases` legados, mantem perfis ja migrados, e cai para o primeiro perfil quando `activeProfileId` referencia ID inexistente.
+- **Gates desta maquina:** `npm test` verde, `npm run build` verde.
+
+### Decisao pendente fechada nesta sessao
+
+- A feature `model:load` / `model:unload` ficou exposta pelo IPC e usada pela `ModelsPage` (botoes "Carregar engine" / "Desinstalar" continuam coexistindo), mas o launcher continua a sintetizar carregando sob demanda. A decisao definitiva de auto/manual/ambos fica para uma rodada de UX dedicada — o codigo ja suporta os dois caminhos.
+
+### Pendencias que continuam abertas
+
+- Instalacao em maquina Windows limpa.
+- VB-Cable + Discord/Zoom em maquina limpa.
+- Canal direto de suporte beta para tester nao tecnico.
+- Atalhos globais customizaveis (so listagem readonly nesta rodada; edicao fica para v1.1).
+
+### Arquivos tocados nesta rodada
+
+- `tailwind.config.js`, `src/renderer/src/index.css` — tokens + classes HUD.
+- `src/main/ipc-handlers.ts`, `src/main/index.ts`, `src/main/python-manager.ts` — validacao, conflito de atalhos, diagnostics estendido.
+- `src/shared/types.ts` — `Profile`, `AppSettings.schemaVersion/profiles/activeProfileId`.
+- `src/preload/index.ts`, `src/renderer/src/types/electron.d.ts` — `onGlobalShortcutConflict`.
+- `src/renderer/src/utils/communicationState.ts` — UUID generator.
+- `src/renderer/src/stores/appStore.ts` — perfis + migration.
+- `src/renderer/src/hooks/useCommunicationSettings.ts` — sync parcial de eventos.
+- `src/renderer/src/App.tsx` — TitleBar, Sidebar, BackendBanner, HomePage, CompactView novos.
+- `src/renderer/src/pages/*` — DashboardPage, TTSPage, ModelsPage, SettingsPage, LogsPage, ClonePage atualizados.
+- `src/renderer/src/components/*` — ToastContainer, OnboardingTutorial, LocalSetupCard, **DiscordReadyBanner (novo)**, **ProfileSwitcher (novo)**.
+- Testes: `src/renderer/src/utils/communicationState.test.ts`, `src/renderer/src/stores/appStore.test.ts`.
+
+---
+
+## Snapshot de Continuidade - 2026-06-02
+
+### Pivô do produto: online-first + mic virtual auto-install + atalhos unificados
+
+Esta rodada moveu o produto do "MVP local" para uma experiência **online-first focada em Discord/gamers e comunicação assistiva**, com instalação assistida do microfone virtual e unificação total dos atalhos de voz.
+
+**1. Pivô online-only (Edge TTS)**
+- A tela **Falar** e a navegação passaram a forçar `voiceSource = 'cloud'` (Microsoft Edge TTS via WebSocket). As abas/rotas locais **`/models` (Vozes) e `/clone` (Clonar) foram removidas** da navegação e do roteador; `/dashboard` (hardware) permanece por ser útil também online.
+- O painel local morto da tela Falar (seletor de modelo/voz local) foi removido do JSX. Restou apenas lógica local **defensiva** (guards `voiceSource === 'local'` sempre falsos + `modelId`/`voiceId` ainda consumidos pelo histórico e pelo `DiscordReadyBanner`); removê-la cascateia no histórico/banner, então ficou para uma limpeza futura dedicada.
+- O áudio online é roteado no renderer via `setSinkId` (Web Audio), não pelo backend.
+
+**2. Microfone virtual com download + instalação assistida (VB-Cable)**
+- Novo fluxo: o launcher **baixa o `VBCABLE_Driver_Pack45.zip`** (URL + SHA-256 fixados em `app-config.ts`), extrai e **lança o instalador**.
+- **Causa-raiz resolvida** do "instalador não abre": a conta do usuário é **padrão (não-admin)**; a elevação UAC troca para um admin diferente que **não enxerga o AppData do usuário**. Solução: baixar/extrair para **`%ProgramData%\VoiceLaunch TTS\vbcable`** (gravável pelo usuário e acessível ao admin que eleva) e lançar com `Start-Process -Verb RunAs`. Erros anteriores percorridos: `spawn EACCES` → `shell.openPath` (path inexistente) → `Start-Process -Verb RunAs`.
+- Em **dev**, o backend agora prefere o standalone empacotado (`python_dist/.../voicelaunch-backend.exe`) antes do `python.exe` — o `python.exe` da máquina era um stub da Microsoft Store ("Python executable not runnable").
+
+**3. "O mic sai mas não consigo me ouvir" → monitoramento**
+- A voz ia **só** para o CABLE Input (o que o Discord ouve). Agora há **saída dupla** (Web Audio: `source.connect(cabo)` + `source.connect(ctx.destination)`), então o usuário ouve a própria voz nos fones **enquanto** ela vai pro cabo. Auto-seleção do CABLE Input ao ligar o mic no modo online.
+
+**4. Latência**
+- Cache LRU de áudio do Edge TTS (`cloudTtsCache`) no main + **pré-aquecimento** dos atalhos (síntese antecipada) para o disparo sair na hora.
+
+**5. Atalhos de voz unificados (fonte única `voiceShortcuts`)**
+- As **`quickPhrases` legadas foram aposentadas** como mecanismo de atalho: `schemaVersion 3→4` com migração `quickPhrases → voiceShortcuts` (teclas em ordem `Ctrl+Shift+1..9` etc, voz = `cloudVoice` ou vazia, sem apagar as `quickPhrases`).
+- **Colisão de hotkey resolvida (Fase 0):** os slots `Ctrl+Shift+1..9` **não são mais** registrados fixos em `setupGlobalShortcuts`; pertencem aos atalhos de voz (`registerVoiceShortcuts`), registrados conforme o usuário cria.
+- **Criação/edição inline** unificada: cards na tela **Falar** e na tela **Atalhos** criam (escrever frase → "Adicionar/criar") e editam (texto, tecla, voz, testar) via componentes compartilhados `ShortcutControls.tsx` + hook `useVoiceShortcuts.ts`.
+
+**6. Dependências**
+- Bump **Electron `^36 → ^42`** (instalado 42.2.0) e **electron-builder `^25 → ^26`** (26.8.1). Validado: `electron-vite build` = **build OK**; tsc e testes verdes no Electron 42.
+
+### Gates desta máquina (2026-06-02)
+- [x] `tsc --noEmit` = **OK**.
+- [x] `vitest run` = **134/134 testes passando** (novos: migração v4 `quickPhrases→voiceShortcuts` — sequência de teclas, voz vazia sem cloud, pula vazios, cap nos slots, fallback do perfil ativo, não-regenera quando já há atalhos, preserva `quickPhrases`, nome em 40 chars; + hidratação dispara `reregisterVoiceShortcuts` na conversão e não dispara sem atalhos).
+- [x] `electron-vite build` = **build OK** no Electron 42.
+
+### Pendências reais antes de release empacotada
+- **`python_dist` está defasado** (gerado em 2026-05-15, **sem os endpoints `/mic/route`, `/mic/status`, `/mic/refresh`** da Fase 2). O dev roda do fonte; o **instalador** precisa de um `python_dist` reconstruído antes de validar o mic virtual empacotado.
+- `npm run dist:win` completo (NSIS) + revalidação do backend empacotado + smoke ainda **não** rerodados nesta rodada (são território do `release-packager` / skill `dist-win-release`).
+- Validar o fluxo VB-Cable ponta-a-ponta em **conta padrão** (download→ProgramData→UAC→instala→Discord ouve) em máquina limpa.
+- Installer não assinado (SmartScreen) segue como pendência de release pública.
+
+### Branch / onde paramos
+- Trabalho na branch **`feat/virtual-mic-auto-install`** (não mergeada). Commits das Fases 0–6 + testes (Fase 5) + bump + docs nesta rodada; **push/PR** é o passo final da Fase 7.
+- Artefatos de planejamento desta rodada: `docs/superpowers/analyses/2026-06-02-virtual-mic-discord-gap-analysis.md` e `docs/superpowers/plans/2026-06-02-unificacao-atalhos.md`. Agentes de design/fluxo novos: `.claude/agents/ui-designer.md`, `.claude/agents/ux-flow.md`.

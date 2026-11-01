@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+python_dist/
+
+# Build outputs
+out/
+dist/
+build-py/
+*.spec
+
+# Environment
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+.runtime/
+.superpowers/
+
+# Models (large files)
+models/
+*.onnx
+*.pt
+*.pth
+*.bin
+
+# User data (apenas na raiz do projeto)
+/user-data/
+/voices/
+
+# Python build temp scraps (leftover from venv build attempts)
+.tmp-*/
+build-py-temp/
+build-py-tmp/
+tmp*/
+
+# Companion workspaces (brainstorm only, nao sao parte do produto)
+.axon/
+.axon_builder/
+
+# VB-Cable redistributable (donationware) — baixado no build, nao versionado
+assets/vbcable/*.exe
+
+# Playwright
+test-results/
+playwright-report/
