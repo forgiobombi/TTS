@@ -117,8 +117,12 @@ function setupAutoUpdater(): void {
   }, 10000)
 }
 
-// Preserve the original settings/models directory after the product display name changes.
-app.setPath('userData', join(app.getPath('appData'), 'voicelaunch-tts'))
+// Retain the original VoiceLaunch settings/models path across the product rename.
+// Respect explicit --user-data-dir to keep E2E profiles isolated.
+const userDataFlag = process.argv.find((arg) => arg.startsWith('--user-data-dir='))
+app.setPath('userData', userDataFlag
+  ? userDataFlag.slice('--user-data-dir='.length)
+  : join(app.getPath('appData'), 'VoiceLaunch TTS'))
 const gotSingleInstanceLock = app.requestSingleInstanceLock()
 if (!gotSingleInstanceLock) {
   logMain('INFO', 'Another VoiceLaunch instance is already running; quitting this one.')
