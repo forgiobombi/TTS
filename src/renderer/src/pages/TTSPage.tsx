@@ -32,9 +32,13 @@ import { routeEngine, type EngineRouteInput } from '../utils/engineRouter'
 import { isEdgeHealthy } from '../stores/appStore'
 import { ShortcutCard } from '../components/ShortcutControls'
 import { useVoiceShortcuts } from '../hooks/useVoiceShortcuts'
+import { useCloudVoices } from '../hooks/useCloudVoices'
+import { pickDefaultEnglishVoice } from '../utils/cloudVoiceFormatting'
 import { formatHotkeyDisplay } from '../utils/voiceShortcuts'
 
 export default function TTSPage() {
+  const { voices: cloudVoices } = useCloudVoices()
+  const hydrated = useAppStore((state) => state._hydrated)
   const {
     defaultModelId,
     defaultSpeed,
@@ -87,6 +91,16 @@ export default function TTSPage() {
   const [hardwareTier, setHardwareTier] = useState<string | undefined>(undefined)
   const shortcuts = useVoiceShortcuts()
   const [shortcutDraft, setShortcutDraft] = useState('')
+
+  // Wait for settings hydration before selecting an English fallback.
+  useEffect(() => {
+    if (!hydrated || cloudVoices.length === 0) return
+    const resolved = cloudVoices.find((voice) => voice.ShortName === storedCloudVoiceShortName)
+      ?? pickDefaultEnglishVoice(cloudVoices)
+    if (!resolved) return
+    setLocalCloudVoice(resolved)
+    if (resolved.ShortName !== storedCloudVoiceShortName) setStoredCloudVoice(resolved.ShortName)
+  }, [hydrated, cloudVoices, storedCloudVoiceShortName, setStoredCloudVoice])
 
   const handleCloudVoiceSelect = useCallback((voice: CloudVoice) => {
     setLocalCloudVoice(voice)

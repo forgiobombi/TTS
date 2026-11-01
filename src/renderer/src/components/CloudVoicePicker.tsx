@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Cloud, Globe, Search, Volume2 } from 'lucide-react'
 import type { CloudVoice } from '../../../shared/types'
 import { useCloudVoices } from '../hooks/useCloudVoices'
@@ -17,7 +17,12 @@ interface CloudVoicePickerProps {
 export default function CloudVoicePicker({ selectedVoice, onSelect }: CloudVoicePickerProps) {
   const { voices, loading, error } = useCloudVoices()
   const [search, setSearch] = useState('')
-  const [localeFilter, setLocaleFilter] = useState<string>('pt-BR')
+  const [localeFilter, setLocaleFilter] = useState<string>('en-US')
+
+  useEffect(() => {
+    const selected = voices.find((voice) => voice.ShortName === selectedVoice)
+    if (selected) setLocaleFilter(selected.Locale)
+  }, [voices, selectedVoice])
 
   const availableLocales = useMemo(() => sortAvailableLocales(voices), [voices])
   const filteredVoices = useMemo(
