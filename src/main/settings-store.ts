@@ -3,12 +3,12 @@ import { join } from 'path'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import type { AppSettings } from '../shared/types'
 
-const SETTINGS_PATH = join(app.getPath('userData'), 'settings.json')
+const getSettingsPath = () => join(app.getPath('userData'), 'settings.json')
 
 export function loadSettings(): AppSettings {
   try {
-    if (existsSync(SETTINGS_PATH)) {
-      const data = readFileSync(SETTINGS_PATH, 'utf-8')
+    if (existsSync(getSettingsPath())) {
+      const data = readFileSync(getSettingsPath(), 'utf-8')
       return JSON.parse(data)
     }
   } catch (e) {
@@ -24,7 +24,7 @@ export function saveSettings(settings: AppSettings): void {
       mkdirSync(dir, { recursive: true })
     }
     const mergedSettings = { ...loadSettings(), ...settings }
-    writeFileSync(SETTINGS_PATH, JSON.stringify(mergedSettings, null, 2), 'utf-8')
+    writeFileSync(getSettingsPath(), JSON.stringify(mergedSettings, null, 2), 'utf-8')
   } catch (e) {
     console.error('Failed to save settings:', e)
   }

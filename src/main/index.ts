@@ -24,6 +24,8 @@ function createWindow(): void {
     show: false,
     autoHideMenuBar: true,
     frame: false,
+    title: 'VoxRelay',
+    icon: app.isPackaged ? join(process.resourcesPath, 'voxrelay-icon.png') : join(__dirname, '../../build/icon.png'),
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'hidden',
     backgroundColor: '#06030F',
     webPreferences: {
@@ -115,6 +117,8 @@ function setupAutoUpdater(): void {
   }, 10000)
 }
 
+// Preserve the original settings/models directory after the product display name changes.
+app.setPath('userData', join(app.getPath('appData'), 'voicelaunch-tts'))
 const gotSingleInstanceLock = app.requestSingleInstanceLock()
 if (!gotSingleInstanceLock) {
   logMain('INFO', 'Another VoiceLaunch instance is already running; quitting this one.')

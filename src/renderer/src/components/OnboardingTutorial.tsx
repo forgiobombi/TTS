@@ -52,7 +52,7 @@ function iconFor(action: PlaybookStepAction | 'welcome'): ReactNode {
 function buildSteps(hardware: HardwareInfo | null): Step[] {
   const playbook = getHardwarePlaybook(hardware)
   const intro: Step = {
-    title: 'Welcome to VoiceLaunch TTS',
+    title: 'Welcome to VoxRelay',
     description:
       'A local voice station for people who can\'t speak, gamers, Discord users, or anyone who needs assistive communication. Your track was adapted to your hardware.',
     icon: iconFor('welcome'),

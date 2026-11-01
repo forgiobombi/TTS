@@ -1,6 +1,7 @@
 {
   "name": "voicelaunch-tts",
   "version": "1.3.1",
+  "productName": "VoxRelay",
   "description": "Open-source TTS launcher for assistive communication and Discord/games (online-first) with virtual microphone",
   "main": "./out/main/index.js",
   "author": "VoiceLaunch Team",
@@ -8,7 +9,7 @@
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/skarL007/sound_voice.git"
+    "url": "https://github.com/forgiobombi/TTS.git"
   },
   "scripts": {
     "dev": "electron-vite dev",

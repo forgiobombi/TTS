@@ -12,7 +12,8 @@ import { validateModelId, validateAudioExtension, isHttpUrl } from './security-u
 import { getBundledVBCableInstallerCandidates, isAutoUpdateEnabled, VBCABLE_DOWNLOAD } from './app-config'
 import { listEdgeVoices, synthesizeEdgeTTS } from './edge-tts-client'
 
-const USER_DATA = app.getPath('userData')
+// Keep model folders stable even while Electron evaluates imports before startup.
+const USER_DATA = join(app.getPath('appData'), 'voicelaunch-tts')
 const MODELS_DIR = join(USER_DATA, 'models')
 const VOICES_DIR = join(USER_DATA, 'voices')
 
@@ -614,7 +615,7 @@ export function registerIpcHandlers(): void {
       new Notification({
         title: safeTitle,
         body: safeBody,
-        icon: join(__dirname, '../../build/icon.png'),
+        icon: app.isPackaged ? join(process.resourcesPath, 'voxrelay-icon.png') : join(__dirname, '../../build/icon.png'),
         silent: false,
       }).show()
     }
